@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Excel Data Display</title>
+  <style>
+    /* CSS styles for your webpage */
+  </style>
+</head>
+<body>
+  <table id="data-table">
+    <!-- The table will be populated dynamically -->
+  </table>
+
+  <script src="js/papaparse.js"></script> <!-- Include the Papa Parse library -->
+  <script>
+    // JavaScript code to load and display CSV data
+    var csvFilePath = "data.csv"; // Path to your CSV file
+
+    // Use Papa Parse to parse the CSV data
+    Papa.parse(csvFilePath, {
+      download: true,
+      header: true,
+      complete: function (results) {
+        var data = results.data;
+
+        // Iterate over the data and populate the table
+        var table = document.getElementById("data-table");
+        data.forEach(function (row) {
+          var newRow = table.insertRow();
+          newRow.insertCell().textContent = row.Name;
+          newRow.insertCell().textContent = row.Field2;
+          // Add more cells for other fields as needed
+        });
+      }
+    });
+  </script>
+</body>
+</html>
