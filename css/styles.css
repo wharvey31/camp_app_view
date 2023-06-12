@@ -1,0 +1,27 @@
+<style>
+  /* CSS styles for your webpage */
+
+  /* Enlarge the text */
+  body {
+    font-size: 16px;
+  }
+
+  /* Add borders to the table */
+  #data-table {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+  }
+
+  #data-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+
+  /* Add alternate row background color */
+  #data-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  #data-table th {
+    font-weight: bold;
+  }
+</style>

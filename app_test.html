@@ -4,9 +4,43 @@
   <title>Excel Data Display</title>
   <style>
     /* CSS styles for your webpage */
+
+    /* Enlarge the text */
+    body {
+      font-size: 16px;
+    }
+
+    /* Add borders to the table */
+    #data-table {
+      border-collapse: collapse;
+      border: 1px solid #ccc;
+    }
+
+    #data-table th,
+    #data-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    /* Add alternate row background color */
+    #data-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    /* Make the column names bold */
+    #data-table th {
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
+  <div id="navigation-bar">
+    <label for="name-select">Select Name:</label>
+    <select id="name-select" onchange="updateDisplayedRow()">
+      <!-- Options will be populated dynamically -->
+    </select>
+  </div>
+
   <table id="data-table">
     <!-- The table will be populated dynamically -->
   </table>
@@ -14,7 +48,8 @@
   <script src="js/papaparse.js"></script> <!-- Include the Papa Parse library -->
   <script>
     // JavaScript code to load and display CSV data
-    var csvFilePath = "data.csv"; // Path to your CSV file
+    var csvFilePath = "https://raw.githubusercontent.com/wharvey31/camp_app_view/main/data.csv"; // Path to your CSV file
+    var displayedRowIndex = 0; // Default row index to display
 
     // Use Papa Parse to parse the CSV data
     Papa.parse(csvFilePath, {
@@ -23,16 +58,65 @@
       complete: function (results) {
         var data = results.data;
 
-        // Iterate over the data and populate the table
-        var table = document.getElementById("data-table");
-        data.forEach(function (row) {
-          var newRow = table.insertRow();
-          newRow.insertCell().textContent = row.Name;
-          newRow.insertCell().textContent = row.Field2;
-          // Add more cells for other fields as needed
-        });
+        // Populate the name select dropdown with available name options
+        populateNameSelect(data);
+
+        // Populate the table initially with default row
+        populateTable(data, displayedRowIndex);
+
+        // Update displayed row when name select changes
+        document.getElementById("name-select").onchange = function () {
+          var selectedName = this.value;
+          displayedRowIndex = findRowIndexByName(data, selectedName);
+          populateTable(data, displayedRowIndex);
+        };
       }
     });
+
+    // Function to populate the name select dropdown
+    function populateNameSelect(data) {
+      var nameSelect = document.getElementById("name-select");
+
+      // Clear previous options
+      nameSelect.innerHTML = "";
+
+      // Get the unique names from the data
+      var uniqueNames = Array.from(new Set(data.map(row => row.Name)));
+
+      // Create options for each name
+      for (var i = 0; i < uniqueNames.length; i++) {
+        var option = document.createElement("option");
+        option.value = uniqueNames[i];
+        option.textContent = uniqueNames[i];
+        nameSelect.appendChild(option);
+      }
+    }
+
+    // Function to find the row index based on a given name value
+    function findRowIndexByName(data, name) {
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].Name === name) {
+          return i;
+        }
+      }
+      return 0; // Default to the first row if the name is not found
+    }
+
+    // Function to populate the table with the selected row
+    function populateTable(data, rowIndex) {
+      var table = document.getElementById("data-table");
+      table.innerHTML = ""; // Clear previous data
+
+      // Get the selected row
+      var row = data[rowIndex];
+
+      // Iterate over the row and populate the table with each value
+      for (var field in row) {
+        var newRow = table.insertRow();
+        var newCell = newRow.insertCell();
+        newCell.textContent = field + ": " + row[field];
+      }
+    }
   </script>
 </body>
 </html>
